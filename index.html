@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>পূজায়ো | Purohit Fee Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1008;--sf:#2a1f10;--sf2:#3a2c18;--bd:#5a4020;--gd:#e8b84b;--gd2:#f5d07a;--tx:#f0e6d0;--mu:#a08060;--r:12px;--sh:0 4px 20px rgba(0,0,0,.5)}
+[data-theme=light]{--bg:#fdf6e8;--sf:#fff8ec;--sf2:#fef0d0;--bd:#d4a84b;--gd:#b8760a;--gd2:#8a5500;--tx:#3a2000;--mu:#8a6030;--sh:0 4px 20px rgba(180,100,0,.15)}
+[data-theme=oled]{--bg:#000;--sf:#0a0700;--sf2:#120e05;--bd:#3a2800;--gd:#e8b84b;--gd2:#f5d07a;--tx:#f0e6d0;--mu:#806040}
+[data-theme=hc]{--bg:#000;--sf:#000;--sf2:#111;--bd:#ff0;--gd:#ff0;--gd2:#fff;--tx:#fff;--mu:#ff0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Bengali',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;transition:background .3s,color .3s}
+header{width:100%;max-width:480px;padding:16px 16px 8px;text-align:center}
+.app-name{font-family:'Tiro Bangla',serif;font-size:2.6rem;font-weight:900;color:var(--gd);display:block;line-height:1.1;letter-spacing:2px;text-shadow:0 2px 12px rgba(232,184,75,.35)}
+.app-sub{display:block;font-size:.72rem;color:var(--mu);margin-top:5px;letter-spacing:2px;text-transform:uppercase}
+.top-bar{display:flex;gap:6px;justify-content:center;margin-top:9px;flex-wrap:wrap}
+.lang-bar{display:flex;gap:6px;justify-content:center;margin-top:6px}
+.t-btn,.l-btn{border:1.5px solid var(--bd);background:var(--sf);color:var(--mu);padding:4px 10px;border-radius:20px;cursor:pointer;font-size:.7rem;font-family:inherit;transition:all .2s}
+.t-btn.active,.l-btn.active,.t-btn:hover,.l-btn:hover{border-color:var(--gd);color:var(--gd);background:var(--sf2)}
+main{width:100%;max-width:480px;padding:0 16px;flex:1}
+.trial-bar{border-radius:var(--r);padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:.78rem}
+.trial-bar.active{background:#1a3a1a;border:1px solid #4caf50;color:#81c784}
+.trial-bar.expired{background:#3a0000;border:1px solid #f44336;color:#ef9a9a}
+.trial-bar.paid{background:#1a2a3a;border:1px solid var(--gd);color:var(--gd)}
+.trial-days{font-weight:700;font-size:.9rem}
+.info{background:var(--sf2);border-left:3px solid var(--gd);padding:9px 11px;border-radius:0 8px 8px 0;font-size:.76rem;color:var(--mu);line-height:1.6;margin-bottom:12px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.ct{font-family:'Tiro Bangla',serif;font-size:1rem;color:var(--gd);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ct::before{content:'';width:3px;height:1em;background:var(--gd);border-radius:2px;display:inline-block}
+label{display:block;font-size:.78rem;color:var(--mu);margin-bottom:3px;margin-top:9px}
+label:first-of-type{margin-top:0}
+select,input[type=number]{width:100%;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:9px 11px;border-radius:8px;font-size:.88rem;font-family:inherit;outline:none;transition:border .2s}
+select{appearance:auto;cursor:pointer}
+select:focus,input:focus{border-color:var(--gd)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.extras{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+.chk-item{display:flex;align-items:center;gap:6px;background:var(--sf2);border:1px solid var(--bd);padding:7px 9px;border-radius:8px;cursor:pointer;font-size:.8rem;transition:border .2s}
+.chk-item input{accent-color:var(--gd);width:14px;height:14px;flex-shrink:0}
+.chk-item.on{border-color:var(--gd);color:var(--gd)}
+.surge-tag{display:inline-block;background:var(--gd);color:#1a0e00;font-size:.68rem;padding:2px 7px;border-radius:10px;margin-top:5px;font-weight:700}
+.btn{width:100%;background:var(--gd);color:#1a0e00;border:none;padding:12px;border-radius:10px;font-size:.95rem;font-family:'Tiro Bangla',serif;font-weight:700;cursor:pointer;margin-top:5px}
+.btn2{background:var(--sf2);color:var(--gd);border:1px solid var(--gd);font-size:.82rem;padding:8px;margin-top:8px}
+.rg{display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:baseline}
+.rl{font-size:.8rem;color:var(--mu)}.rv{font-size:.86rem;color:var(--tx);text-align:right}
+.dv{grid-column:1/-1;height:1px;background:var(--bd);margin:5px 0}
+.tot{display:flex;justify-content:space-between;align-items:center;background:var(--sf2);border:1px solid var(--gd);border-radius:8px;padding:10px 13px;margin-top:6px}
+.tl{font-family:'Tiro Bangla',serif;font-size:.95rem;color:var(--gd)}
+.ta{font-family:'Tiro Bangla',serif;font-size:1.25rem;color:var(--gd2);font-weight:700}
+.note{font-size:.72rem;color:var(--mu);text-align:center;margin-top:7px}
+.bhog-result{background:var(--sf2);border:1px solid var(--gd);border-radius:8px;padding:10px 13px;margin-top:8px;font-size:.84rem}
+.checklist{display:flex;flex-direction:column;gap:5px}
+.cli{display:flex;align-items:center;gap:8px;font-size:.82rem;padding:6px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.cli:last-child{border-bottom:none}
+.cli input{accent-color:var(--gd);width:15px;height:15px;flex-shrink:0}
+.cli.done{color:var(--mu);text-decoration:line-through}
+.hist-item{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:9px 11px;margin-bottom:8px;font-size:.8rem}
+.hist-item strong{color:var(--gd);display:block;margin-bottom:2px}
+.hist-del{float:right;background:none;border:none;color:var(--mu);cursor:pointer}
+/* Payment Wall */
+.pay-wall{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.pay-wall.show{display:flex}
+.pw-icon{font-size:3rem;margin-bottom:10px}
+.pw-title{font-family:'Tiro Bangla',serif;font-size:1.3rem;color:var(--gd);margin-bottom:6px}
+.pw-sub{font-size:.8rem;color:var(--mu);margin-bottom:16px;line-height:1.6}
+.pw-box{background:var(--sf);border:1px solid var(--gd);border-radius:var(--r);padding:20px;width:100%;max-width:380px}
+.pw-amount{font-size:2rem;font-weight:900;color:var(--gd2);margin:8px 0}
+.upi-id{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:10px;text-align:center;margin:10px 0}
+.upi-id small{font-size:.7rem;color:var(--mu)}
+.upi-id strong{display:block;color:var(--gd);font-size:1rem;margin-top:2px;letter-spacing:1px}
+.upi-btn{display:block;background:var(--gd);color:#1a0e00;border:none;padding:12px;border-radius:10px;font-family:'Tiro Bangla',serif;font-weight:700;font-size:.95rem;cursor:pointer;width:100%;margin:10px 0;text-decoration:none;text-align:center}
+.txn-input{width:100%;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:10px;border-radius:8px;font-size:.88rem;font-family:inherit;outline:none;margin-top:8px}
+.txn-input:focus{border-color:var(--gd)}
+.act-btn{width:100%;background:#4caf50;color:#fff;border:none;padding:12px;border-radius:9px;font-family:'Tiro Bangla',serif;font-weight:700;font-size:.95rem;cursor:pointer;margin-top:8px}
+.mid-note{font-size:.68rem;color:var(--mu);margin-top:10px}
+.pay-msg{font-size:.75rem;margin-top:8px;min-height:18px;text-align:center}
+@media print{body>*:not(#rcpt){display:none!important}#rcpt{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;color:#111;padding:24px 20px}}
+footer{width:100%;max-width:480px;text-align:center;padding:16px;font-size:.7rem;color:var(--mu);border-top:1px solid var(--bd);margin-top:6px}
+</style>
+</head>
+<body data-theme="dark">
+<header>
+  <strong class="app-name" id="appTitle">পূজায়ো</strong>
+  <span class="app-sub" id="appSub">Purohit Fee Calculator</span>
+  <div class="top-bar">
+    <button class="t-btn active" onclick="setTheme('dark',this)">🌙 Dark</button>
+    <button class="t-btn" onclick="setTheme('light',this)">☀️ Light</button>
+    <button class="t-btn" onclick="setTheme('oled',this)">⚫ OLED</button>
+    <button class="t-btn" onclick="setTheme('hc',this)">◈ HC</button>
+  </div>
+  <div class="lang-bar">
+    <button class="l-btn active" onclick="setLang('bn',this)">বাং</button>
+    <button class="l-btn" onclick="setLang('en',this)">EN</button>
+    <button class="l-btn" onclick="setLang('hi',this)">हिं</button>
+  </div>
+</header>
+<main>
+  <div id="trialBar" class="trial-bar active">
+    <span id="trialMsg">ট্রায়াল সক্রিয়</span>
+    <span class="trial-days" id="trialDays"></span>
+  </div>
+  <div class="info" id="infoText">পূজা-পার্বণে পুরোহিতের দক্ষিণা নির্ভর করে পূজার ধরন, সময়কাল ও অতিরিক্ত সেবার উপর।</div>
+
+  <div class="card">
+    <div class="ct" id="lbl_details">পূজার বিবরণ</div>
+    <label id="lbl_pujaType">পূজার ধরন</label>
+    <select id="pujaType" onchange="updateDuration();showChecklist();showSeason()">
+      <option value="saraswati">সরস্বতী পূজা</option><option value="durga">দুর্গাপূজা (পঞ্চমী–দশমী)</option>
+      <option value="kali">কালীপূজা</option><option value="lakshmi">লক্ষ্মীপূজা</option>
+      <option value="ganesh">গণেশ পূজা</option><option value="vivah">বিবাহ (সম্পূর্ণ)</option>
+      <option value="annaprasan">অন্নপ্রাশন</option><option value="upanayana">উপনয়ন / পৈতা</option>
+      <option value="shraddha">শ্রাদ্ধ / অন্ত্যেষ্টি</option><option value="satyanarayan">সত্যনারায়ণ পূজা</option>
+      <option value="griha">গৃহপ্রবেশ</option><option value="vastu">বাস্তু শান্তি</option>
+      <option value="navagraha">নবগ্রহ পূজা</option><option value="hanuman">হনুমান পূজা</option>
+      <option value="manasa">মনসা পূজা</option><option value="bishwakarma">বিশ্বকর্মা পূজা</option>
+      <option value="jagaddhatri">জগদ্ধাত্রী পূজা</option><option value="kartik">কার্তিক পূজা</option>
+      <option value="jamai_shashthi">জামাই ষষ্ঠী</option><option value="ras">রাস পূজা</option>
+      <option value="dol">দোলযাত্রা / হোলি পূজা</option><option value="charak">চড়ক পূজা / গাজন</option>
+      <option value="namkaran">নামকরণ সংস্কার</option><option value="brata">ব্রত উদযাপন</option>
+      <option value="custom">অন্যান্য / কাস্টম</option>
+    </select>
+    <div id="surgeTag"></div>
+    <div class="row2">
+      <div><label id="lbl_exp">পুরোহিতের অভিজ্ঞতা</label>
+        <select id="experience"><option value="1">নতুন (০–৫ বছর)</option><option value="1.5" selected>মধ্যম (৫–১৫ বছর)</option><option value="2">বিশেষজ্ঞ (১৫+ বছর)</option></select></div>
+      <div><label id="lbl_loc">পূজার স্থান</label>
+        <select id="location"><option value="0.9">গ্রাম / মফস্বল</option><option value="1" selected>শহর</option><option value="1.3">মহানগর (কলকাতা)</option></select></div>
+    </div>
+    <div class="row2">
+      <div><label id="lbl_dur">সময়কাল (ঘণ্টা)</label><input type="number" id="duration" value="4" min="1" max="72"></div>
+      <div><label id="lbl_priests">পুরোহিত সংখ্যা</label><input type="number" id="priests" value="1" min="1" max="10"></div>
+    </div>
+    <label id="lbl_month">উৎসবের মাস (সার্জ চেক)</label>
+    <select id="festMonth" onchange="showSeason()">
+      <option value="1">জানুয়ারি</option><option value="2">ফেব্রুয়ারি</option><option value="3">মার্চ</option><option value="4">এপ্রিল</option><option value="5">মে</option><option value="6">জুন</option><option value="7">জুলাই</option><option value="8">আগস্ট</option><option value="9">সেপ্টেম্বর</option><option value="10" selected>অক্টোবর</option><option value="11">নভেম্বর</option><option value="12">ডিসেম্বর</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="ct" id="lbl_extras">অতিরিক্ত সেবা</div>
+    <div class="extras">
+      <label class="chk-item" id="lx_samgri"><input type="checkbox" id="samgri" onchange="toggleChk('lx_samgri')"> <span id="ex_samgri">পূজার সামগ্রী</span></label>
+      <label class="chk-item" id="lx_travel"><input type="checkbox" id="travel" onchange="toggleChk('lx_travel')"> <span id="ex_travel">যাতায়াত খরচ</span></label>
+      <label class="chk-item" id="lx_sankalpa"><input type="checkbox" id="sankalpa" onchange="toggleChk('lx_sankalpa')"> <span id="ex_sankalpa">সংকল্প পাঠ</span></label>
+      <label class="chk-item" id="lx_homa"><input type="checkbox" id="homa" onchange="toggleChk('lx_homa')"> <span id="ex_homa">হোম / যজ্ঞ</span></label>
+      <label class="chk-item" id="lx_pushpanjali"><input type="checkbox" id="pushpanjali" onchange="toggleChk('lx_pushpanjali')"> <span id="ex_pushpanjali">পুষ্পাঞ্জলি</span></label>
+      <label class="chk-item" id="lx_prasad"><input type="checkbox" id="prasad" onchange="toggleChk('lx_prasad')"> <span id="ex_prasad">প্রসাদ বিতরণ</span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct" id="lbl_bhog">ভোগ / প্রসাদ খরচ</div>
+    <div class="row2">
+      <div><label id="lbl_guests">অতিথি সংখ্যা</label><input type="number" id="guests" value="20" min="1" max="5000"></div>
+      <div><label id="lbl_bhogType">ভোগের ধরন</label>
+        <select id="bhogType"><option value="35">সাধারণ (ফল-মিষ্টি)</option><option value="80" selected>মাঝারি (রান্না ভোগ)</option><option value="150">বিশেষ (পঞ্চব্যঞ্জন)</option></select></div>
+    </div>
+    <button class="btn btn2" onclick="calcBhog()" id="btn_bhog">ভোগ খরচ হিসাব করুন</button>
+    <div id="bhogResult" style="display:none" class="bhog-result"></div>
+  </div>
+
+  <div class="card">
+    <div class="ct" id="lbl_checklist">সামগ্রী চেকলিস্ট</div>
+    <div class="checklist" id="checklistItems"></div>
+  </div>
+
+  <button class="btn" onclick="calculate()" id="btn_calc">দক্ষিণা হিসাব করুন ▶</button>
+
+  <div class="card" id="resultCard" style="display:none">
+    <div class="ct" id="lbl_result">দক্ষিণার বিবরণ</div>
+    <div class="rg" id="resultGrid"></div>
+    <div class="tot"><span class="tl" id="lbl_total">মোট দক্ষিণা</span><span class="ta" id="totalAmt"></span></div>
+    <div class="note" id="resultNote">* আনুমানিক হিসাব। পুরোহিতের সাথে আলোচনা করে নির্ধারণ করুন।</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn2" style="flex:1" onclick="saveEstimate()" id="btn_save">💾 সংরক্ষণ করুন</button>
+      <button class="btn btn2" style="flex:1" onclick="printReceipt()" id="btn_print">🖨️ প্রিন্ট রসিদ</button>
+    </div>
+  </div>
+
+  <div class="card" id="histCard" style="display:none">
+    <div class="ct" id="lbl_history">সংরক্ষিত হিসাব</div>
+    <div id="histList"></div>
+    <button class="btn btn2" onclick="clearHistory()" id="btn_clearHist">সব মুছুন</button>
+  </div>
+</main>
+
+<!-- Payment Wall (full screen) -->
+<div class="pay-wall" id="payWall">
+  <div class="pw-icon">⏰</div>
+  <div class="pw-title" id="pw_title">ট্রায়াল মেয়াদ শেষ</div>
+  <div class="pw-sub" id="pw_sub">আপনার ১৪ দিনের বিনামূল্যে ট্রায়াল শেষ হয়েছে।<br>সম্পূর্ণ সুবিধা পেতে সাবস্ক্রাইব করুন।</div>
+  <div class="pw-box">
+    <div style="font-family:'Tiro Bangla',serif;font-size:.95rem;color:var(--gd)" id="pw_plan">পূজায়ো — মাসিক প্ল্যান</div>
+    <div class="pw-amount">₹১৯৯<span style="font-size:1rem;font-weight:400;color:var(--mu)">/মাস</span></div>
+    <div class="upi-id">
+      <small id="pw_upi_label">UPI তে পাঠান</small>
+      <strong id="pw_upi_id">9433082017@ybl</strong>
+    </div>
+    <a class="upi-btn" id="pw_upi_btn" href="#">📱 UPI অ্যাপে পে করুন</a>
+    <div style="font-size:.72rem;color:var(--mu);margin-bottom:6px" id="pw_txn_label">পেমেন্টের পর Transaction ID লিখুন</div>
+    <input class="txn-input" id="pw_txn" type="text" placeholder="Transaction ID / UTR নম্বর">
+    <button class="act-btn" onclick="activateFromWall()" id="pw_activate">✅ অ্যাক্টিভেট করুন</button>
+    <div class="pay-msg" id="pw_msg"></div>
+    <div class="mid-note" id="pw_mid"></div>
+  </div>
+</div>
+
+<footer>© <span id="yr"></span> Manik Roy. All Rights Reserved.</footer>
+<script>
+const BASE={saraswati:800,durga:6000,kali:1500,lakshmi:700,ganesh:900,vivah:8000,annaprasan:2500,upanayana:3500,shraddha:2000,satyanarayan:1200,griha:2000,vastu:1800,navagraha:1500,hanuman:1100,manasa:1100,bishwakarma:1000,jagaddhatri:2500,kartik:1000,jamai_shashthi:800,ras:1800,dol:1200,charak:1500,namkaran:1800,brata:700,custom:1000};
+const DUR={saraswati:3,durga:48,kali:6,lakshmi:2,ganesh:3,vivah:12,annaprasan:4,upanayana:6,shraddha:5,satyanarayan:3,griha:4,vastu:4,navagraha:3,hanuman:3,manasa:4,bishwakarma:3,jagaddhatri:6,kartik:3,jamai_shashthi:2,ras:5,dol:3,charak:6,namkaran:3,brata:2,custom:4};
+const SURGE={durga:{9:1.3,10:1.3},kali:{10:1.25,11:1.25},jagaddhatri:{10:1.2,11:1.2},saraswati:{1:1.2,2:1.2},dol:{2:1.15,3:1.15},bishwakarma:{8:1.2,9:1.2},charak:{3:1.2,4:1.2},kartik:{10:1.15,11:1.15},lakshmi:{9:1.15,10:1.2}};
+const EXTRAS_AMT={samgri:500,travel:300,sankalpa:200,homa:800,pushpanjali:150,prasad:250};
+const CL={saraswati:['সরস্বতী প্রতিমা','বই-কলম (অঞ্জলির জন্য)','পুষ্প ও মালা','ধুনো ও ধূপ','পঞ্চপ্রদীপ','দধি-দুর্বা','নৈবেদ্য (ফল-মিষ্টি)','লাল পাড় শাড়ি'],durga:['দুর্গা প্রতিমা','বেলপাতা','ষোড়শোপচার সামগ্রী','ধুনো ও ধূপ','পুষ্পাঞ্জলির ফুল','হোমের কাঠ','নৈবেদ্য ও ভোগ','লাল কাপড়','সন্ধি পূজার মালা','ঢাক-ঢোল ব্যবস্থা'],kali:['কালী প্রতিমা','লাল জবা ফুল','নীল অপরাজিতা','মাটির প্রদীপ','ধুনো','নৈবেদ্য','লাল কাপড়','মিষ্টি ও ফল'],vivah:['বেদী ও মণ্ডপ','মঙ্গলঘট','লাজা (খই)','শালপাতা','ধান-দুর্বা','পুষ্পমালা','সপ্তপদীর ধান','হোমের কাঠ','তিল','আম্রপল্লব'],hanuman:['হনুমান প্রতিমা / ছবি','সিঁদুর','লাল ফুল','কলা ও ফল','তিল ও গুড়','দীপ ও ধূপ','হনুমান চালিশা','লাল কাপড়'],lakshmi:['লক্ষ্মী প্রতিমা','ধানের ছড়া','পদ্ম ফুল','ষোড়শোপচার','আলপনা সামগ্রী','নৈবেদ্য','প্রদীপ','সাদা কাপড়'],default:['ফুল ও মালা','ধুনো ও ধূপকাঠি','পঞ্চপ্রদীপ','নৈবেদ্য (ফল-মিষ্টি)','কলাপাতা','দূর্বাঘাস','পঞ্চামৃত উপকরণ','লাল বা হলুদ কাপড়']};
+const UPI_ID='9433082017@ybl';
+const TRIAL_DAYS=14;
+
+const L={
+bn:{appTitle:'পূজায়ো',appSub:'পুরোহিত দক্ষিণা ক্যালকুলেটর',infoText:'পূজা-পার্বণে পুরোহিতের দক্ষিণা নির্ভর করে পূজার ধরন, সময়কাল ও অতিরিক্ত সেবার উপর।',lbl_details:'পূজার বিবরণ',lbl_pujaType:'পূজার ধরন',lbl_exp:'পুরোহিতের অভিজ্ঞতা',lbl_loc:'পূজার স্থান',lbl_dur:'সময়কাল (ঘণ্টা)',lbl_priests:'পুরোহিত সংখ্যা',lbl_month:'উৎসবের মাস (সার্জ চেক)',lbl_extras:'অতিরিক্ত সেবা',ex_samgri:'পূজার সামগ্রী',ex_travel:'যাতায়াত খরচ',ex_sankalpa:'সংকল্প পাঠ',ex_homa:'হোম / যজ্ঞ',ex_pushpanjali:'পুষ্পাঞ্জলি',ex_prasad:'প্রসাদ বিতরণ',lbl_bhog:'ভোগ / প্রসাদ খরচ',lbl_guests:'অতিথি সংখ্যা',lbl_bhogType:'ভোগের ধরন',btn_bhog:'ভোগ খরচ হিসাব করুন',lbl_checklist:'সামগ্রী চেকলিস্ট',btn_calc:'দক্ষিণা হিসাব করুন ▶',lbl_result:'দক্ষিণার বিবরণ',lbl_total:'মোট দক্ষিণা',resultNote:'* আনুমানিক হিসাব। পুরোহিতের সাথে আলোচনা করে নির্ধারণ করুন।',btn_save:'💾 সংরক্ষণ করুন',btn_print:'🖨️ প্রিন্ট রসিদ',lbl_history:'সংরক্ষিত হিসাব',btn_clearHist:'সব মুছুন',surge_lbl:'🔥 উৎসব মরসুম সার্জ',r_type:'পূজার ধরন',r_base:'ভিত্তি দক্ষিণা',r_surge:'মরসুম সার্জ',r_sub:'পুরোহিত মোট',r_range:'প্রস্তাবিত পরিসর',bhog_pp:'প্রতি জন',bhog_guests:'অতিথি',bhog_total:'মোট ভোগ খরচ',priests:'পুরোহিত',trial_active:'✅ ট্রায়াল সক্রিয়',trial_left:'দিন বাকি',trial_paid:'✅ সক্রিয় সদস্যতা',pw_title:'ট্রায়াল মেয়াদ শেষ',pw_sub:'আপনার ১৪ দিনের বিনামূল্যে ট্রায়াল শেষ।\nসম্পূর্ণ সুবিধা পেতে সাবস্ক্রাইব করুন।',pw_plan:'পূজায়ো — মাসিক প্ল্যান',pw_upi_label:'UPI তে পাঠান',pw_upi_btn:'📱 UPI অ্যাপে পে করুন',pw_txn_label:'পেমেন্টের পর Transaction ID লিখুন',pw_activate:'✅ অ্যাক্টিভেট করুন'},
+en:{appTitle:'Pujayo',appSub:'Priest Fee Calculator',infoText:'Puja fees depend on puja type, duration, and additional services. This calculator gives an estimate.',lbl_details:'Puja Details',lbl_pujaType:'Puja Type',lbl_exp:'Priest Experience',lbl_loc:'Location',lbl_dur:'Duration (hrs)',lbl_priests:'No. of Priests',lbl_month:'Festival Month (surge check)',lbl_extras:'Additional Services',ex_samgri:'Puja Samagri',ex_travel:'Travel Allowance',ex_sankalpa:'Sankalpa Recitation',ex_homa:'Homa / Yajna',ex_pushpanjali:'Pushpanjali',ex_prasad:'Prasad Distribution',lbl_bhog:'Bhog / Prasad Cost',lbl_guests:'No. of Guests',lbl_bhogType:'Bhog Type',btn_bhog:'Calculate Bhog Cost',lbl_checklist:'Samagri Checklist',btn_calc:'Calculate Fee ▶',lbl_result:'Fee Breakdown',lbl_total:'Total Dakshina',resultNote:'* Approximate estimate. Please confirm with your purohit.',btn_save:'💾 Save Estimate',btn_print:'🖨️ Print Receipt',lbl_history:'Saved Estimates',btn_clearHist:'Clear All',surge_lbl:'🔥 Peak Season Surge',r_type:'Puja Type',r_base:'Base Fee',r_surge:'Season Surge',r_sub:'Priest Subtotal',r_range:'Suggested Range',bhog_pp:'Per person',bhog_guests:'Guests',bhog_total:'Total Bhog Cost',priests:'priest(s)',trial_active:'✅ Trial Active',trial_left:'days left',trial_paid:'✅ Active Subscription',pw_title:'Trial Expired',pw_sub:'Your 14-day free trial has ended.\nSubscribe to continue using all features.',pw_plan:'Pujayo — Monthly Plan',pw_upi_label:'Pay via UPI',pw_upi_btn:'📱 Pay with UPI App',pw_txn_label:'Enter Transaction ID after payment',pw_activate:'✅ Activate'},
+hi:{appTitle:'पूजायो',appSub:'पुरोहित दक्षिणा कैलकुलेटर',infoText:'पूजा में दक्षिणा पूजा प्रकार, अवधि और अतिरिक्त सेवाओं पर निर्भर करती है।',lbl_details:'पूजा विवरण',lbl_pujaType:'पूजा प्रकार',lbl_exp:'पुरोहित अनुभव',lbl_loc:'स्थान',lbl_dur:'अवधि (घंटे)',lbl_priests:'पुरोहित संख्या',lbl_month:'उत्सव माह (सर्ज जांच)',lbl_extras:'अतिरिक्त सेवाएं',ex_samgri:'पूजा सामग्री',ex_travel:'यात्रा भत्ता',ex_sankalpa:'संकल्प पाठ',ex_homa:'होम / यज्ञ',ex_pushpanjali:'पुष्पांजलि',ex_prasad:'प्रसाद वितरण',lbl_bhog:'भोग / प्रसाद लागत',lbl_guests:'अतिथि संख्या',lbl_bhogType:'भोग प्रकार',btn_bhog:'भोग लागत गणना करें',lbl_checklist:'सामग्री चेकलिस्ट',btn_calc:'दक्षिणा गणना करें ▶',lbl_result:'दक्षिणा विवरण',lbl_total:'कुल दक्षिणा',resultNote:'* अनुमानित हिसाब। पुरोहित से चर्चा करके तय करें।',btn_save:'💾 सहेजें',btn_print:'🖨️ रसीद प्रिंट करें',lbl_history:'सहेजे गए अनुमान',btn_clearHist:'सभी हटाएं',surge_lbl:'🔥 त्योहारी सीजन सर्ज',r_type:'पूजा प्रकार',r_base:'आधार दक्षिणा',r_surge:'मौसमी वृद्धि',r_sub:'पुरोहित उप-योग',r_range:'सुझाई गई सीमा',bhog_pp:'प्रति व्यक्ति',bhog_guests:'अतिथि',bhog_total:'कुल भोग लागत',priests:'पुरोहित',trial_active:'✅ ट्रायल सक्रिय',trial_left:'दिन शेष',trial_paid:'✅ सक्रिय सदस्यता',pw_title:'ट्रायल समाप्त',pw_sub:'आपका 14 दिन का निःशुल्क ट्रायल समाप्त हो गया।\nसभी सुविधाएं जारी रखने के लिए सब्सक्राइब करें।',pw_plan:'पूजायो — मासिक प्लान',pw_upi_label:'UPI से भुगतान करें',pw_upi_btn:'📱 UPI ऐप से पे करें',pw_txn_label:'भुगतान के बाद Transaction ID दर्ज करें',pw_activate:'✅ एक्टिवेट करें'}
+};
+
+window.lang='bn';let lastResult=null;
+function t(k){const l=window.lang||'bn';return(L[l]&&L[l][k])||L.bn[k]||k;}
+const BN_D=['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+const HI_D=['०','१','२','३','४','५','६','७','८','९'];
+function fmt(n){const l=window.lang||'bn';const s=Math.round(n).toLocaleString('en-IN');if(l==='bn')return'₹'+s.replace(/\d/g,d=>BN_D[d]);if(l==='hi')return'₹'+s.replace(/\d/g,d=>HI_D[d]);return'₹'+s;}
+
+// Machine ID
+function getMID(){const fp=[navigator.userAgent,screen.width+'x'+screen.height,screen.colorDepth,navigator.language,navigator.hardwareConcurrency||0,new Date().getTimezoneOffset()].join('|');let h=0;for(let i=0;i<fp.length;i++){h=((h<<5)-h)+fp.charCodeAt(i);h=h&h;}return Math.abs(h).toString(36).toUpperCase().padStart(8,'0');}
+const MID=getMID();
+const TRIAL_KEY='pujayo_trial_'+MID;
+const PAID_KEY='pujayo_paid_'+MID;
+
+function getTrialData(){
+  let data=localStorage.getItem(TRIAL_KEY);
+  if(!data){data=JSON.stringify({start:Date.now(),mid:MID});localStorage.setItem(TRIAL_KEY,data);}
+  const {start}=JSON.parse(data);
+  const used=Math.floor((Date.now()-start)/86400000);
+  return{start,used,left:Math.max(0,TRIAL_DAYS-used),expired:used>=TRIAL_DAYS};
+}
+function isPaid(){return!!localStorage.getItem(PAID_KEY);}
+
+function checkAccess(){
+  const bar=document.getElementById('trialBar');
+  if(isPaid()){
+    bar.className='trial-bar paid';
+    document.getElementById('trialMsg').textContent=t('trial_paid');
+    document.getElementById('trialDays').textContent='';
+    return true;
+  }
+  const td=getTrialData();
+  if(td.expired){
+    bar.className='trial-bar expired';
+    document.getElementById('trialMsg').textContent=t('pw_title');
+    document.getElementById('trialDays').textContent='';
+    showPayWall();
+    return false;
+  }
+  bar.className='trial-bar active';
+  document.getElementById('trialMsg').textContent=t('trial_active');
+  document.getElementById('trialDays').textContent=td.left+' '+t('trial_left');
+  return true;
+}
+
+function showPayWall(){
+  ['pw_title','pw_sub','pw_plan','pw_upi_label','pw_upi_btn','pw_txn_label','pw_activate'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=t(id);
+  });
+  document.getElementById('pw_upi_id').textContent=UPI_ID;
+  document.getElementById('pw_upi_btn').href=`upi://pay?pa=${UPI_ID}&pn=Pujayo&am=199&cu=INR&tn=Pujayo+Subscription`;
+  document.getElementById('pw_mid').textContent='Machine ID: '+MID;
+  document.getElementById('payWall').classList.add('show');
+}
+
+function activateFromWall(){
+  const txn=document.getElementById('pw_txn').value.trim();
+  const msg=document.getElementById('pw_msg');
+  if(!txn){msg.style.color='#f44336';msg.textContent=t('lbl_pujaType')==='পূজার ধরন'?'Transaction ID লিখুন।':'Please enter Transaction ID.';return;}
+  localStorage.setItem(PAID_KEY,JSON.stringify({txn,date:new Date().toISOString(),mid:MID}));
+  msg.style.color='#4caf50';
+  msg.textContent='✅ '+(window.lang==='bn'?'সফলভাবে অ্যাক্টিভ!':window.lang==='hi'?'सफलतापूर्वक सक्रिय!':'Successfully activated!');
+  setTimeout(()=>{document.getElementById('payWall').classList.remove('show');checkAccess();},1500);
+}
+
+function setTheme(th,el){document.body.setAttribute('data-theme',th);document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');localStorage.setItem('pt_theme',th);}
+function setLang(l,el){window.lang=l;document.querySelectorAll('.l-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');applyLang();showChecklist();showSeason();localStorage.setItem('pt_lang',l);}
+
+function applyLang(){
+  ['appTitle','appSub','infoText','lbl_details','lbl_pujaType','lbl_exp','lbl_loc','lbl_dur','lbl_priests','lbl_month','lbl_extras','ex_samgri','ex_travel','ex_sankalpa','ex_homa','ex_pushpanjali','ex_prasad','lbl_bhog','lbl_guests','lbl_bhogType','btn_bhog','lbl_checklist','btn_calc','lbl_result','lbl_total','resultNote','btn_save','btn_print','lbl_history','btn_clearHist'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t(id);});
+  const _t=document.getElementById('appTitle'),_s=document.getElementById('appSub');
+  if(_t)_t.textContent=t('appTitle');if(_s)_s.textContent=t('appSub');
+  checkAccess();
+  if(lastResult&&lastResult.raw&&document.getElementById('resultCard').style.display!=='none')renderResult();
+}
+
+function toggleChk(id){const el=document.getElementById(id);el.classList.toggle('on',el.querySelector('input').checked);}
+function updateDuration(){document.getElementById('duration').value=DUR[document.getElementById('pujaType').value]||4;}
+function showSeason(){
+  const type=document.getElementById('pujaType').value,mo=+document.getElementById('festMonth').value;
+  const tag=document.getElementById('surgeTag'),s=SURGE[type];
+  if(s&&s[mo]){tag.innerHTML=`<span class="surge-tag">${t('surge_lbl')}: ×${s[mo]}</span>`;}
+  else tag.innerHTML='';
+}
+function showChecklist(){
+  const type=document.getElementById('pujaType').value,items=CL[type]||CL.default;
+  document.getElementById('checklistItems').innerHTML=items.map((item,i)=>`<label class="cli" id="cl${i}"><input type="checkbox" onchange="document.getElementById('cl${i}').classList.toggle('done',this.checked)"> ${item}</label>`).join('');
+}
+function calcBhog(){
+  const guests=+document.getElementById('guests').value||20,loc=+document.getElementById('location').value;
+  const pp=Math.round(+document.getElementById('bhogType').value*loc),total=guests*pp;
+  const d=document.getElementById('bhogResult');d.style.display='block';
+  d.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--mu);font-size:.77rem">${t('bhog_pp')}: ${fmt(pp)}</span><span style="color:var(--mu);font-size:.77rem">${t('bhog_guests')}: ${guests}</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--gd);font-family:'Tiro Bangla',serif">${t('bhog_total')}</span><span style="color:var(--gd2);font-family:'Tiro Bangla',serif;font-size:1.15rem;font-weight:700">${fmt(total)}</span></div>`;
+}
+
+function renderResult(){
+  if(!lastResult||!lastResult.raw)return;
+  const r=lastResult.raw;
+  const typeName=document.getElementById('pujaType').options[document.getElementById('pujaType').selectedIndex].text;
+  let rows=`<div class="rl">${t('r_type')}</div><div class="rv">${typeName}</div><div class="rl">${t('r_base')}</div><div class="rv">${fmt(r.base)}</div>`;
+  if(r.surge>1)rows+=`<div class="rl">${t('r_surge')} ×${r.surge}</div><div class="rv">${fmt(r.surgedBase)}</div>`;
+  rows+=`<div class="rl">${t('r_sub')} ×${r.priests}</div><div class="rv">${fmt(r.priestFee)}</div><div class="dv"></div>`;
+  r.extras.forEach(e=>{rows+=`<div class="rl">${t('ex_'+e.key)}</div><div class="rv">${fmt(e.amt)}</div>`;});
+  if(r.extras.length)rows+=`<div class="dv"></div>`;
+  rows+=`<div class="rl">${t('r_range')}</div><div class="rv">${fmt(r.low)} – ${fmt(r.high)}</div>`;
+  document.getElementById('resultGrid').innerHTML=rows;
+  document.getElementById('totalAmt').textContent=fmt(r.total);
+}
+
+function calculate(){
+  if(!checkAccess())return;
+  const type=document.getElementById('pujaType').value,exp=+document.getElementById('experience').value;
+  const loc=+document.getElementById('location').value,hrs=+document.getElementById('duration').value||1;
+  const priests=+document.getElementById('priests').value||1,mo=+document.getElementById('festMonth').value;
+  const surge=(SURGE[type]&&SURGE[type][mo])||1;
+  let base=BASE[type]||1000;const defH=DUR[type]||4;
+  if(hrs!==defH)base=base*(hrs/defH);
+  base=Math.round(base*exp*loc);
+  const surgedBase=Math.round(base*surge),priestFee=surgedBase*priests;
+  const extras=[];
+  ['samgri','travel','sankalpa','homa','pushpanjali','prasad'].forEach(k=>{
+    if(document.getElementById(k).checked)extras.push({key:k,amt:Math.round(EXTRAS_AMT[k]*loc*surge)});
+  });
+  const extrasTotal=extras.reduce((s,e)=>s+e.amt,0);
+  const total=priestFee+extrasTotal,low=Math.round(total*.85),high=Math.round(total*1.15);
+  const typeName=document.getElementById('pujaType').options[document.getElementById('pujaType').selectedIndex].text;
+  lastResult={type:typeName,total,surge,priests,date:new Date().toLocaleDateString('en-IN'),raw:{base,surgedBase,priestFee,surge,priests,extras,total,low,high}};
+  renderResult();
+  const rc=document.getElementById('resultCard');rc.style.display='block';
+  rc.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function saveEstimate(){
+  if(!lastResult)return;
+  const h=JSON.parse(localStorage.getItem('pt_hist')||'[]');
+  h.unshift(lastResult);if(h.length>10)h.pop();
+  localStorage.setItem('pt_hist',JSON.stringify(h));renderHistory();
+}
+function renderHistory(){
+  const h=JSON.parse(localStorage.getItem('pt_hist')||'[]');
+  const hc=document.getElementById('histCard'),hl=document.getElementById('histList');
+  if(!h.length){hc.style.display='none';return;}
+  hc.style.display='block';
+  hl.innerHTML=h.map((e,i)=>`<div class="hist-item"><button class="hist-del" onclick="delHist(${i})">✕</button><strong>${e.type}</strong>${fmt(e.total)} · ${e.priests} ${t('priests')}${e.surge>1?' 🔥':''} · ${e.date}</div>`).join('');
+}
+function delHist(i){const h=JSON.parse(localStorage.getItem('pt_hist')||'[]');h.splice(i,1);localStorage.setItem('pt_hist',JSON.stringify(h));renderHistory();}
+function clearHistory(){localStorage.removeItem('pt_hist');renderHistory();}
+
+function printReceipt(){
+  if(!lastResult||!lastResult.raw)return;
+  const existing=document.getElementById('rcpt');if(existing)existing.remove();
+  const div=document.createElement('div');div.id='rcpt';
+  div.innerHTML=`<div style="text-align:center;border-bottom:2px solid #c97c2a;padding-bottom:12px;margin-bottom:14px"><div style="font-size:1.6rem;font-weight:900;color:#c97c2a">${t('appTitle')}</div><div style="font-size:.72rem;color:#888;margin-top:3px">${t('appSub')}</div><div style="font-size:.72rem;color:#888;margin-top:4px">${lastResult.date}</div></div><div style="display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin-bottom:14px">${document.getElementById('resultGrid').innerHTML}</div><div style="display:flex;justify-content:space-between;background:#fff8ec;border:2px solid #c97c2a;border-radius:8px;padding:10px 14px;margin-bottom:10px"><span style="font-weight:700;color:#c97c2a">${t('lbl_total')}</span><span style="font-size:1.2rem;font-weight:900;color:#8a5500">${document.getElementById('totalAmt').textContent}</span></div><div style="font-size:.7rem;color:#aaa;text-align:center">${t('resultNote')}</div><div style="text-align:center;font-size:.68rem;color:#bbb;margin-top:14px;padding-top:10px;border-top:1px solid #eee">© ${new Date().getFullYear()} Manik Roy. All Rights Reserved.</div>`;
+  document.body.appendChild(div);window.print();
+  setTimeout(()=>{const el=document.getElementById('rcpt');if(el)el.remove();},500);
+}
+
+// INIT
+document.getElementById('yr').textContent=new Date().getFullYear();
+const sT=localStorage.getItem('pt_theme');
+if(sT){document.body.setAttribute('data-theme',sT);document.querySelectorAll('.t-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes(`'${sT}'`)));}
+const sL=localStorage.getItem('pt_lang')||'bn';
+window.lang=sL;
+document.querySelectorAll('.l-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes(`'${sL}'`)));
+applyLang();showChecklist();showSeason();renderHistory();checkAccess();
+</script>
+</body>
+</html>
